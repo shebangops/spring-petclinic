@@ -1,36 +1,43 @@
 #!/bin/bash
 
+# Created by Vladimir Radmanovic
+
+repo="spring-petclinic"
+branch="dev"
+container_name="petclinic_grid"
+image_name="petclinic:0.0.1"
+
 # Clone project
-git clone git@github.com:shebangops/spring-petclinic.git
-cd spring-petclinic
-# Checkout branch 
-git checkout dev
+git clone https://github.com:shebangops/${repo}.git
+cd ${repo}
+
+# Checkout branch
+git checkout ${branch}
+
 # Pull latest changes
-git pull origin dev
+git pull origin ${branch}
 
 # build new jar
 ./mvnw package
 
-if [[ `docker ps -a | grep petclinic_grid` = *[!\ ]* ]]
+# Check if containr is running
+if [[ `docker ps -a | grep ${container_name}` = *[!\ ]* ]]
        then
          echo "Deleting docker container "
-         docker stop petclinic_grid 
-         docker rm petclinic_grid
+         docker stop ${container_name}
+         docker rm ${container_name}
          echo "Docker container deleted"
        else
 	 echo "Container not running"
 fi
 
+# Build new image
+docker build -t ${image_name} .
 
-#after mvwn check if container is running and if it yes stop & delete
+# Run container
+docker run --name ${container_name} -itd -p 8080:8080 ${image_name}
 
-
-#build new image
-docker build -t petclinic:0.0.1 .
-
-#run container 
-docker run --name petclinic_grid -itd -p 8080:8080 petclinic:0.0.1
-
+echo "Open http://localhost:8080"
 
 
 
