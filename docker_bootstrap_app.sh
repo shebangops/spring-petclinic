@@ -29,7 +29,7 @@ git pull origin ${branch}
 # build new jar
 ./mvnw package
 
-# Check if containr is running
+# Check if container is running
 if [[ `docker ps -a | grep ${container_name}` = *[!\ ]* ]]
        then
          echo "Stoping and deleting docker container... "
