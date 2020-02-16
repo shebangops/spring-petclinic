@@ -7,8 +7,17 @@ branch="dev"
 container_name="petclinic_grid"
 image_name="petclinic:0.0.1"
 
+# Check if git is installed
+if [[ -z  $(command -v git) ]]
+then
+   echo "Please install git to continue."
+   exit 1
+else
+   echo "Git installed, cloning project.."
+fi
+
 # Clone project
-git clone https://github.com:shebangops/${repo}.git
+git clone https://github.com/shebangops/${repo}.git
 cd ${repo}
 
 # Checkout branch
@@ -23,7 +32,7 @@ git pull origin ${branch}
 # Check if containr is running
 if [[ `docker ps -a | grep ${container_name}` = *[!\ ]* ]]
        then
-         echo "Deleting docker container "
+         echo "Stoping and deleting docker container... "
          docker stop ${container_name}
          docker rm ${container_name}
          echo "Docker container deleted"
@@ -38,6 +47,3 @@ docker build -t ${image_name} .
 docker run --name ${container_name} -itd -p 8080:8080 ${image_name}
 
 echo "Open http://localhost:8080"
-
-
-
